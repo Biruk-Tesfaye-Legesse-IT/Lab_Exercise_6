@@ -74,7 +74,18 @@ document.addEventListener('DOMContentLoaded', () => {
         
         */
 
+        let newData = {
+            taskname: taskInput.value,
+            id: id
+        }
+        let transaction = DB.transaction(['tasks'], 'readwrite');
+        let objectStore = transaction.objectStore('tasks');
+        const updateStoreFetch = objectStore.put(newData);
+        updateStoreFetch.onsuccess = () => {
+            console.log("transaction is " + updateStoreFetch.transaction);
+            displayTask()
 
+        };
 
         history.back();
     }
