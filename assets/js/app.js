@@ -109,6 +109,62 @@ document.addEventListener("DOMContentLoaded", () => {
     // ============================================== Sort ================================================
 
 
+    function sort() {
+        let tasks = [];
+        let cursor;
+        let readRequest = DB.transaction(["tasks"])
+            .objectStore("tasks")
+            .openCursor();
+
+        readRequest.onerror = function() {
+            console.log("Error Reading");
+        };
+
+        readRequest.onsuccess = function(e) {
+            cursor = e.target.result;
+
+            if (cursor) {
+                tasks.push(cursor.value);
+                cursor.continue();
+            }
+        };
+
+        setTimeout(() => {
+            let sortedArray = Array.from(bubbleSortD(tasks));
+            while (taskList.firstChild) {
+                taskList.removeChild(taskList.firstChild);
+            }
+
+            for (let i = 0; i < sortedArray.length; i++) {
+                const li = document.createElement("li");
+                //add Attribute for delete
+                li.setAttribute("data-task-id", sortedArray[i].id);
+                li.className = "collection-item";
+                // Create text node and append it
+
+                li.appendChild(document.createTextNode(sortedArray[i].taskname));
+
+                // Create new element for the link
+                const link = document.createElement("a");
+                // Add class and the x marker for a
+                link.className = "delete-item secondary-content";
+                link.innerHTML = `
+                <i class="fa fa-remove"></i>
+               &nbsp;
+               <a href="../../edit.html?id=${sortedArray[i].id}"><i class="fa fa-edit"></i> </a>
+               `;
+                // Append link to li
+                li.appendChild(link);
+                // Append to UL
+                taskList.appendChild(li);
+            }
+        }, 100);
+    }
+
+
+
+
+
 
     // ****************************************
 
